@@ -1,0 +1,64 @@
+name: Test Composite Action - generate-values
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-generate-values:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - test-case: 'basic'
+            service-name: 'basic-service'
+            image: 'nginx:latest'
+            cpu: '1000m'
+            memory: '512Mi'
+            port: '80'
+            env-vars: '[]'
+
+          - test-case: 'with-env'
+            service-name: 'env-service'
+            image: 'node:18'
+            cpu: '2'
+            memory: '1Gi'
+            port: '3000'
+            env-vars: '[{"name": "ENV", "value": "production"}, {"name": "DEBUG", "value": "false"}]'
+
+          - test-case: 'multiline-env'
+            service-name: 'multiline-service'
+            image: 'python:3.11'
+            cpu: '500m'
+            memory: '256Mi'
+            port: '8000'
+            env-vars: |
+              [
+                {"name": "ENV", "value": "production"},
+                {"name": "DEBUG", "value": "false"},
+                {"name": "PORT", "value": "3000"}
+              ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Generate values.json
+        id: generate
+        uses: ./.github/actions/generate-values
+        with:
+          service-name: ${{ matrix.service-name }}
+          image: ${{ matrix.image }}
+          cpu: ${{ matrix.cpu }}
+          memory: ${{ matrix.memory }}
+          port: ${{ matrix.port }}
+          env-vars: ${{ matrix.env-vars }}
+          output-dir: './output'
+
+      - name: Compare generated JSON with expected
+        run: |
+          EXPECTED_FILE=".github/actions/generate-values/expected/${{ matrix.test-case }}.json"
+          GENERATED_FILE="${{ steps.generate.outputs.values-path }}"
+
+          echo "Comparing $GENERATED_FILE with $EXPECTED_FILE..."
+
+          diff -u "$EXPECTED_FILE" "$GENERATED_FILE"

@@ -1,0 +1,8 @@
+{
+  "serviceName": "basic-service",
+  "image": "nginx:latest",
+  "cpu": "1000m",
+  "memory": "512Mi",
+  "port": "80",
+  "envVars": []
+}

@@ -1,0 +1,61 @@
+name: 'Generate values.json for Cloud Run'
+description: 'Generate values.json from user inputs using jq'
+inputs:
+  service-name:
+    description: 'Cloud Run service name'
+    required: true
+  image:
+    description: 'Container image URL'
+    required: true
+  cpu:
+    description: 'CPU allocation (e.g., 1000m, 2)'
+    required: false
+    default: '1000m'
+  memory:
+    description: 'Memory allocation (e.g., 512Mi, 1Gi)'
+    required: false
+    default: '512Mi'
+  port:
+    description: 'Container port number'
+    required: false
+    default: '8080'
+  env-vars:
+    description: 'Environment variables as JSON array string'
+    required: false
+    default: '[]'
+  output-dir:
+    description: 'Directory to output values.json'
+    required: false
+    default: '.'
+outputs:
+  values-path:
+    description: 'Path to generated values.json'
+    value: ${{ steps.generate.outputs.values-path }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Generate values.json
+      id: generate
+      shell: bash
+      run: |
+        OUTPUT_DIR="${{ inputs.output-dir }}"
+        mkdir -p "$OUTPUT_DIR"
+        VALUES_PATH="$OUTPUT_DIR/values.json"
+
+        jq -n \
+          --arg name "${{ inputs.service-name }}" \
+          --arg image "${{ inputs.image }}" \
+          --arg cpu "${{ inputs.cpu }}" \
+          --arg memory "${{ inputs.memory }}" \
+          --arg port "${{ inputs.port }}" \
+          --argjson envVars '${{ inputs.env-vars }}' \
+          '{
+            serviceName: $name,
+            image: $image,
+            cpu: $cpu,
+            memory: $memory,
+            port: $port,
+            envVars: $envVars
+          }' > "$VALUES_PATH"
+
+        echo "values-path=$VALUES_PATH" >> $GITHUB_OUTPUT
