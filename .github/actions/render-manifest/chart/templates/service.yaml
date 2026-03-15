@@ -1,0 +1,22 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: {{ .Values.serviceName }}
+spec:
+  template:
+    spec:
+      containers:
+        - image: {{ .Values.image }}
+          ports:
+            - containerPort: {{ .Values.port }}
+          resources:
+            limits:
+              cpu: {{ .Values.cpu | quote }}
+              memory: {{ .Values.memory | quote }}
+          {{- if .Values.envVars }}
+          env:
+            {{- range .Values.envVars }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          {{- end }}
