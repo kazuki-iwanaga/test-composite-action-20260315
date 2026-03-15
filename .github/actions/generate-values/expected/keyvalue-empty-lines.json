@@ -1,0 +1,17 @@
+{
+  "serviceName": "keyvalue-emptylines-service",
+  "image": "mongo:6",
+  "cpu": "2000m",
+  "memory": "2Gi",
+  "port": "27017",
+  "envVars": [
+    {
+      "name": "ENV",
+      "value": "prod"
+    },
+    {
+      "name": "DEBUG",
+      "value": "false"
+    }
+  ]
+}

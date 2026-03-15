@@ -38,6 +38,62 @@ jobs:
                 {"name": "PORT", "value": "3000"}
               ]
 
+          # key=value形式のテストケース
+          - test-case: 'keyvalue-basic'
+            service-name: 'keyvalue-basic-service'
+            image: 'nginx:alpine'
+            cpu: '1000m'
+            memory: '512Mi'
+            port: '8080'
+            env-vars: 'ENV=production'
+
+          - test-case: 'keyvalue-multiple'
+            service-name: 'keyvalue-multiple-service'
+            image: 'node:18-alpine'
+            cpu: '1000m'
+            memory: '512Mi'
+            port: '3000'
+            env-vars: |-
+              ENV=prod
+              DEBUG=false
+
+          - test-case: 'keyvalue-with-special-chars'
+            service-name: 'keyvalue-special-service'
+            image: 'python:3.11-slim'
+            cpu: '500m'
+            memory: '256Mi'
+            port: '8000'
+            env-vars: 'URL=https://example.com?a=1&b=2'
+
+          - test-case: 'keyvalue-with-spaces'
+            service-name: 'keyvalue-spaces-service'
+            image: 'redis:alpine'
+            cpu: '500m'
+            memory: '128Mi'
+            port: '6379'
+            env-vars: 'NAME = My App'
+
+          - test-case: 'keyvalue-empty-lines'
+            service-name: 'keyvalue-emptylines-service'
+            image: 'mongo:6'
+            cpu: '2000m'
+            memory: '2Gi'
+            port: '27017'
+            env-vars: |-
+              ENV=prod
+
+
+
+              DEBUG=false
+
+          - test-case: 'keyvalue-empty-input'
+            service-name: 'keyvalue-empty-service'
+            image: 'busybox:latest'
+            cpu: '250m'
+            memory: '64Mi'
+            port: '8080'
+            env-vars: ''
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6

@@ -1,0 +1,8 @@
+{
+  "serviceName": "keyvalue-empty-service",
+  "image": "busybox:latest",
+  "cpu": "250m",
+  "memory": "64Mi",
+  "port": "8080",
+  "envVars": []
+}

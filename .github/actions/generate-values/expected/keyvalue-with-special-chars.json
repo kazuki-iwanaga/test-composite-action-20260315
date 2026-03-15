@@ -1,0 +1,13 @@
+{
+  "serviceName": "keyvalue-special-service",
+  "image": "python:3.11-slim",
+  "cpu": "500m",
+  "memory": "256Mi",
+  "port": "8000",
+  "envVars": [
+    {
+      "name": "URL",
+      "value": "https://example.com?a=1&b=2"
+    }
+  ]
+}

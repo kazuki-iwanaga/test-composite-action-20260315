@@ -14,7 +14,10 @@ Cloud Runのservice.yamlを動的生成するComposite Actionを2層構造で実
 - **render-manifest**: values.json→service.yaml（Helm template）
 
 **重要な設計判断:**
-- 配列データ（env-varsなど）はJSON文字列で受け取る
+- 配列データ（env-varsなど）はJSON文字列またはkey=value形式（改行区切り）で受け取る
+  - JSON形式: `[{"name": "KEY", "value": "val"}]`
+  - key=value形式: `KEY1=val1\nKEY2=val2`（空行に対応）
+  - 形式は先頭文字が`[`かどうかで自動判定
 - 中間ファイルはJSON形式（BashでのYAML生成は脆弱性の原因）
 - 各アクションは自己完結（関連リソースを同ディレクトリに配置）
 

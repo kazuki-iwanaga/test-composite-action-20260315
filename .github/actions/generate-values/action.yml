@@ -20,7 +20,7 @@ inputs:
     required: false
     default: '8080'
   env-vars:
-    description: 'Environment variables as JSON array string'
+    description: 'Environment variables as JSON array string OR key=value format (one per line, empty lines are skipped)'
     required: false
     default: '[]'
   output-dir:
@@ -42,13 +42,49 @@ runs:
         mkdir -p "$OUTPUT_DIR"
         VALUES_PATH="$OUTPUT_DIR/values.json"
 
+        # 形式判定関数：先頭文字が[ならJSON形式
+        is_json_format() {
+          local input="$1"
+          local trimmed
+          trimmed=$(echo "$input" | sed 's/^[[:space:]]*//')
+          [[ "${trimmed:0:1}" == "[" ]]
+        }
+
+        # key=valueパース関数
+        parse_key_value_to_json() {
+          local input="$1"
+          local json_array="[]"
+
+          while IFS= read -r line || [[ -n "$line" ]]; do
+            # 空行スキップ
+            [[ -z "$line" ]] && continue
+
+            # key=valueパース（最初の=のみ区切り）
+            if [[ "$line" =~ ^[[:space:]]*([^=]+)=(.*)$ ]]; then
+              local name=$(echo "${BASH_REMATCH[1]}" | xargs)
+              local value=$(echo "${BASH_REMATCH[2]}" | xargs)
+              json_array=$(echo "$json_array" | jq --arg name "$name" --arg value "$value" '. + [{"name": $name, "value": $value}]')
+            fi
+          done <<< "$input"
+
+          echo "$json_array"
+        }
+
+        # env-vars入力の形式判定とパース
+        ENV_VARS_INPUT='${{ inputs.env-vars }}'
+        if is_json_format "$ENV_VARS_INPUT"; then
+          ENV_VARS_JSON="$ENV_VARS_INPUT"
+        else
+          ENV_VARS_JSON=$(parse_key_value_to_json "$ENV_VARS_INPUT")
+        fi
+
         jq -n \
           --arg name "${{ inputs.service-name }}" \
           --arg image "${{ inputs.image }}" \
           --arg cpu "${{ inputs.cpu }}" \
           --arg memory "${{ inputs.memory }}" \
           --arg port "${{ inputs.port }}" \
-          --argjson envVars '${{ inputs.env-vars }}' \
+          --argjson envVars "$ENV_VARS_JSON" \
           '{
             serviceName: $name,
             image: $image,

@@ -1,0 +1,17 @@
+{
+  "serviceName": "keyvalue-multiple-service",
+  "image": "node:18-alpine",
+  "cpu": "1000m",
+  "memory": "512Mi",
+  "port": "3000",
+  "envVars": [
+    {
+      "name": "ENV",
+      "value": "prod"
+    },
+    {
+      "name": "DEBUG",
+      "value": "false"
+    }
+  ]
+}
