@@ -22,6 +22,21 @@ Cloud Runのservice.yamlを動的生成するComposite Actionを2層構造で実
 
 スナップショットテスト（diffで検証）
 
+## 開発フロー
+
+**重要**: コマンド実行は必ずMakefile経由で行うこと。
+
+### テスト実行
+
+```bash
+make test--composite--generate-values   # generate-valuesのテスト
+make test--composite--render-manifest   # render-manifestのテスト
+```
+
+### 新しいコマンドを追加する場合
+
+MakefileにPHONYターゲットとして追加し、本ファイルにも記載すること。
+
 ## 開発時の注意
 
 - 設計変更や学んだことは本ファイルに随時更新
