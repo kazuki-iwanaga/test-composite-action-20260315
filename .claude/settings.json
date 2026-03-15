@@ -1,0 +1,10 @@
+{
+  "allowedCommands": {
+    "bash": [
+      "make"
+    ]
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true
+  }
+}

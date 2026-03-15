@@ -1,0 +1,21 @@
+{
+  "serviceName": "multiline-service",
+  "image": "python:3.11",
+  "cpu": "500m",
+  "memory": "256Mi",
+  "port": "8000",
+  "envVars": [
+    {
+      "name": "ENV",
+      "value": "production"
+    },
+    {
+      "name": "DEBUG",
+      "value": "false"
+    },
+    {
+      "name": "PORT",
+      "value": "3000"
+    }
+  ]
+}

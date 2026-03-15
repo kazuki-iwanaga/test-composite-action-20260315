@@ -1,0 +1,13 @@
+{
+  "serviceName": "keyvalue-spaces-service",
+  "image": "redis:alpine",
+  "cpu": "500m",
+  "memory": "128Mi",
+  "port": "6379",
+  "envVars": [
+    {
+      "name": "NAME",
+      "value": "My App"
+    }
+  ]
+}

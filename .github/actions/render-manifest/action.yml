@@ -1,0 +1,37 @@
+name: 'Render Cloud Run manifest from values'
+description: 'Render Cloud Run service.yaml using Helm template'
+inputs:
+  values-file:
+    description: 'Path to values.json file'
+    required: true
+  output-dir:
+    description: 'Directory to output service.yaml'
+    required: false
+    default: '.'
+outputs:
+  manifest-path:
+    description: 'Path to generated service.yaml'
+    value: ${{ steps.render.outputs.manifest-path }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Helm
+      uses: azure/setup-helm@v4.3.0
+      with:
+        version: 'v4.1.3'
+
+    - name: Render manifest
+      id: render
+      shell: bash
+      run: |
+        OUTPUT_DIR="${{ inputs.output-dir }}"
+        VALUES_FILE="${{ inputs.values-file }}"
+        CHART_DIR="$(dirname "${{ github.action_path }}")/render-manifest/chart"
+
+        mkdir -p "$OUTPUT_DIR"
+        MANIFEST_PATH="$OUTPUT_DIR/service.yaml"
+
+        helm template cloudrun-release "$CHART_DIR" \
+          -f "$VALUES_FILE" > "$MANIFEST_PATH"
+
+        echo "manifest-path=$MANIFEST_PATH" >> $GITHUB_OUTPUT

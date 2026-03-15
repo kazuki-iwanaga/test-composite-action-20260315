@@ -1,0 +1,43 @@
+name: Test Composite Action - render-manifest
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-render-manifest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - test-case: 'basic'
+            values: '{"serviceName":"basic-service","image":"nginx:latest","cpu":"1000m","memory":"512Mi","port":"80","envVars":[]}'
+
+          - test-case: 'with-env'
+            values: '{"serviceName":"env-service","image":"node:18","cpu":"2","memory":"1Gi","port":"3000","envVars":[{"name":"ENV","value":"production"},{"name":"DEBUG","value":"false"}]}'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Create temporary values.json
+        id: create-values
+        run: |
+          VALUES_PATH="./values-${{ matrix.test-case }}.json"
+          echo '${{ matrix.values }}' > "$VALUES_PATH"
+          echo "values-path=$VALUES_PATH" >> $GITHUB_OUTPUT
+
+      - name: Render manifest
+        id: render
+        uses: ./.github/actions/render-manifest
+        with:
+          values-file: ${{ steps.create-values.outputs.values-path }}
+          output-dir: './output'
+
+      - name: Compare generated YAML with expected
+        run: |
+          EXPECTED_FILE=".github/actions/render-manifest/expected/${{ matrix.test-case }}.yaml"
+          GENERATED_FILE="${{ steps.render.outputs.manifest-path }}"
+
+          echo "Comparing $GENERATED_FILE with $EXPECTED_FILE..."
+
+          diff -u "$EXPECTED_FILE" "$GENERATED_FILE"

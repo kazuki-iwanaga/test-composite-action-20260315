@@ -1,0 +1,17 @@
+{
+  "serviceName": "env-service",
+  "image": "node:18",
+  "cpu": "2",
+  "memory": "1Gi",
+  "port": "3000",
+  "envVars": [
+    {
+      "name": "ENV",
+      "value": "production"
+    },
+    {
+      "name": "DEBUG",
+      "value": "false"
+    }
+  ]
+}

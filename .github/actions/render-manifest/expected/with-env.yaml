@@ -1,0 +1,22 @@
+---
+# Source: cloudrun-service/templates/service.yaml
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: env-service
+spec:
+  template:
+    spec:
+      containers:
+        - image: node:18
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              cpu: "2"
+              memory: "1Gi"
+          env:
+            - name: ENV
+              value: "production"
+            - name: DEBUG
+              value: "false"

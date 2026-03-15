@@ -1,0 +1,13 @@
+{
+  "serviceName": "keyvalue-basic-service",
+  "image": "nginx:alpine",
+  "cpu": "1000m",
+  "memory": "512Mi",
+  "port": "8080",
+  "envVars": [
+    {
+      "name": "ENV",
+      "value": "production"
+    }
+  ]
+}
