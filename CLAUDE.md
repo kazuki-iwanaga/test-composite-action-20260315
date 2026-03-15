@@ -37,6 +37,10 @@ make test--composite--render-manifest   # render-manifestのテスト
 
 MakefileにPHONYターゲットとして追加し、本ファイルにも記載すること。
 
+## Claude Code設定
+
+プロジェクトでは[.claude/settings.json](.claude/settings.json)で`make`コマンドを許可しています。新しいMakefileターゲットを追加する場合、settings.jsonの更新は不要です。
+
 ## 開発時の注意
 
 - 設計変更や学んだことは本ファイルに随時更新
